@@ -80,7 +80,6 @@ def createBridge(name: str, ip: str, gatewayIp: str, netflowPort=9000) -> None:
     nodes[name].instantiate()
     nodes[name].setIp(ip, 24)
     nodes[name].connectToInternet(gatewayIp, 24)
-    nodes[name].enableNetflow(gatewayIp, netflowPort)
 
 
 def createController(name: str, bridgeName: str, controllerIp: str, controllerPort: int) -> None:

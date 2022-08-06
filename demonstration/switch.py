@@ -30,7 +30,7 @@ class Switch(Node):
         if collectMetrics:
             self.__collect = True
             self.__collectTo = collectTo+'/'+self.getNodeName()
-            subprocess.run(f"mkdir {self.__collectTo}", shell=True)
+            subprocess.run(f"mkdir {self.__collectTo} 2>/dev/null", shell=True)
 
 
     # Brief: Instantiate an OpenvSwitch switch container
