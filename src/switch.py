@@ -21,10 +21,15 @@ from exceptions import NodeInstantiationFailed
 
 
 class Switch(Node): 
+    # Brief: Instantiate a switch class, where it can be defined to capture flow data of each interface added
+    # Params:
+    # Return:
+    #   None
     def __init__(self, name: str, collectMetrics=False, collectTo=''):
         if collectMetrics:
             self.__collect = True
-            self.__collectTo = collectTo
+            self.__collectTo = collectTo+'/'+self.getNodeName()
+            subprocess.run(f"mkdir {self.__collectTo}", shell=True)
         super().__init__(name)
 
 
@@ -40,6 +45,7 @@ class Switch(Node):
             # Create bridge and set it up
             subprocess.run(f"docker exec {self.getNodeName()} ovs-vsctl add-br {self.getNodeName()}", shell=True)
             subprocess.run(f"docker exec {self.getNodeName()} ip link set {self.getNodeName()} up", shell=True)
+            if self.__collect: self.__collectFlows()
         except Exception as ex:
             logging.error(f"Error while creating the switch {self.getNodeName()}: {str(ex)}")
             raise NodeInstantiationFailed(f"Error while creating the switch {self.getNodeName()}: {str(ex)}")
@@ -135,10 +141,10 @@ class Switch(Node):
             logging.error(f"Error clearing IPFIX on {self.getNodeName()} switch: {str(ex)}")
             raise Exception(f"Error clearing IPFIX on {self.getNodeName()} switch: {str(ex)}")
 
-    def __collectFlows(self, node: Node) -> None:
+    def __collectFlows(self) -> None:
         try:
             subprocess.run(f"docker exec {self.getNodeName()} chmod +x /TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh", shell=True)
-            subprocess.run(f"docker exec {self.getNodeName()} sudo /TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh {self._Node__getThisInterfaceName(node)} /TCPDUMP_and_CICFlowMeter-master/collecteddata", shell=True)
+            subprocess.run(f"docker exec {self.getNodeName()} sudo /TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh {self.getNodeName()} /TCPDUMP_and_CICFlowMeter-master/collecteddata", shell=True)
         except Exception as ex:
             logging.error(f"Error set the collector on {self.getNodeName()} to {node.getNodeName()}: {str(ex)}")
             raise Exception(f"Error set the collector on {self.getNodeName()} to {node.getNodeName()}: {str(ex)}")
