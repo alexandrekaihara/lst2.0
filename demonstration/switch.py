@@ -26,11 +26,11 @@ class Switch(Node):
     # Return:
     #   None
     def __init__(self, name: str, collectMetrics=False, collectTo=''):
+        super().__init__(name)
         if collectMetrics:
             self.__collect = True
             self.__collectTo = collectTo+'/'+self.getNodeName()
             subprocess.run(f"mkdir {self.__collectTo}", shell=True)
-        super().__init__(name)
 
 
     # Brief: Instantiate an OpenvSwitch switch container
