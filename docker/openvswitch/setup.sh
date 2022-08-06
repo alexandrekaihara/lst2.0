@@ -28,7 +28,9 @@ do
 done
 rm master.zip
 
-mkdir /TCPDUMP_and_CICFlowMeter-master/collecteddata
+cd /TCPDUMP_and_CICFlowMeter-master
+
+mkdir collecteddata
 
 sed -i "s/trap/#trap/g" capture_interface_pcap.sh
 sed -i "s/trap/#trap/g" convert_pcap_csv.sh
