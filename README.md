@@ -1,8 +1,10 @@
-# Lightweight SDN Testbed (LST)
+# Lightweight SDN Testbed (LST) 2.0
 ## Description
-There are many Emulated Testbeds proposed for Software-Defined Networking (SDN). Nonetheless, there are still few studies that focus on security. And some of them are restricted to the context in which it was designed and/or do not always meet requirements such as easy installation and configuration, topology configurability and low cost, harming the reusability of the tool. Aiming to fulfill the identified gap, we propose the Lightweight SDN Testbed (LST), an easy-to-use tool for local executions for SDN and security studies. 
+Not all emulated testbeds are suitable for security experimentation. Often security testbeds are restricted to their application context or are based on other technologies which have configurability and security application limitations (\textit{e.g.} Mininet). While other proposals allow greater configurability, they do not focus on security applications or are not inserted in the context of SDN networks. To address the identified research gap, the Lightweight SDN Testbed (\prop) is proposed. \prop is a lightweight tool capable of supporting different application contexts both for security and SDN networks programmatically and in real-time through Python. It is possible to monitor the network and collect metrics using Netflow, sFlow, IPFIX, or CICFlowMeter. In addition, pre-built Docker images are available for emulating both benign and malicious network flows.
 
-The facility provided by this tool is due to the possibility of configuring the experiment from a single JSON file. You can define the number of machines, the Docker image, the behavior of clients, the IP, and the subnet. Another facility is that the Docker images encapsulate the dependencies and the configuration process. Thus, it reduces the number of dependencies needed to set up the experiment. And the creation of machines is simplified and faster because the configuration must be done only during the creation of the Docker image.
+This tool aims to attend the demands of the most diverse study scenarios in SDN and security networks, through an interface with a set of reduced methods, but which allow high flexibility in the configuration and generation of customized topologies. LST 2.0 is mainly based on containers for generating network nodes and all network configuration and behavior is done programmatically. The tool is organized through a set of well-defined methods belonging to a hierarchy of classes, whose parent class, named Node, has all the attributes and minimal methods to instantiate, delete and configure any container. Thus, users can develop their own classes inheriting the attributes of the Node class and focusing only on the specific settings for the study.
+
+By default, three classes are implemented that are specializations of the Node class. The Host class allows you to create containers that will be common nodes that will consume some service on the network. The Switch class allows you to create virtual switches whose network configuration is specific to forward packets between ports of a single bridge contained in the container and also to connect to a controller on a specific IP and port. If no controller is assigned to the switch, the switch will only perform basic network layer functions and also if no IP is assigned to it, it will be a link layer switch. The Controller class allows you to create containers that can instantiate one or more controllers.
 
 This project provides pre-built Docker images to build a small business environment to emulate benign and malicious flows to assess defense mechanisms. This experiment is a modification of a work developed by Markus Ring et. al. (available at: https://www.hs-coburg.de/cidds), which provided all the scripts to emulate the small business environment. This environment includes several clients and typical servers (e.g. e-mail and Web server). 
 
@@ -12,37 +14,33 @@ Your machine must be using a Linux distribution. In our experiments, were used a
 ## Dependencies
 All the dependencies consists of:
 - Docker (version 20.10.7)
-- Docker Compose (version 1.25.0)
-- Pip3 (22.0.3)
-- OpenvSwitch (2.13.3)
+- Python (version 3.8.10)
 
 We provide a Bash script to install all the needed dependencies. To install all dependencies, execute:
 
-> sudo git clone https://github.com/alexandrekaihara/lst
+> sudo git clone https://github.com/alexandrekaihara/lst2.0
 
-> cd lst/experiment
+> cd lst2.0/src
 
 > sudo chmod +x dependencies.sh && sudo ./dependencies.sh
 
 ## Execution
 To execute the script to set up the network topology, execute these commands:
 
-> sudo chmod +x setup.sh
+> cd lst2.0/demonstration
 
-> sudo ./setup.sh partial_experiment.json
+> python3 cidds.py
 
 If you want to finish the experiment e get back to your original network configuration, press CTRL + C once.
 
 ## Docker image build
 If it is necessary to make any change on the docker images, check the "docker" folder located on the root directory of this repository. To build any docker image, access the folder containing its "Dockerfile" file and execute:
 
-> docker build --network=host --tag mdewinged/lst:NEW_CONTAINER_NAME .
+> docker build --network=host .
 
-To use the newly built image in the experiment, access the "lst/experiment" folder and change the file named as "variables" and find the respective image and change its value for the "NEW_CONTAINER_NAME" you have attributed. For example, you have built another version of the webserver and named as webserver2. Thus, you need to change the value of WEB=webserver2 in the "variable" file. 
+To use the newly built image in the experiment, access the "lst2.0/demonstration/cidds.py" file and set "dockerImage" parameter of the "intantiate" method with new docker image name.
 
-The only image that does not follow the command above is the seafileserver. Due to a particular characteristic of its configuration, the seafileserver must create a network interface to build the image, and its IP address in the experiment is static (default is 192.168.50.1). If you need to change the IP on which the server listens, a rebuild is necessary with the new IP. More detailed instructions are located inside the "lst/docker/seafileserver" folder.
-
-## Creating Own .JSON Experiment
+## Creating Your Own Experiment
 As shown in the section above, the "setup.sh" script expects a JSON file as an argument. This file represents all the machines that will be used in the experiment. You can define the Docker image, the subnet, the IP address, the DNS server, bridge to which the container will be connected. 
 
 In this JSON file, all containers are defined using a dictionary with these fields:
