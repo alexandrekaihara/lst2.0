@@ -53,7 +53,7 @@ To create a network node it is necessary to create an instance of [Switch](lst2.
 
 Then execute the following commands:
 
-'''
+```
 from host import Host
 from switch import Switch
 from controller import Controller
@@ -62,60 +62,60 @@ h1 = Host('h1')
 h2 = Host('h2')
 s1 = Switch('s1')
 c1 = Controller('c1')
-'''
+```
 
 PS: You are responsible for keeping the instance of each node class in order to delete them at the end
 
 Then is necessary to instantiate the controller using the instance of the class.
 
-'''
+```
 h1.instantiate()
 h2.instantiate()
 s1.instantiate()
 c1.instantiate()
-'''
+```
 
 ### Connect nodes
 After instantiating nodes, you can connect them by using the "connect" method passing the instance of another node.
 
-'''
+```
 h1.connect(s1)
 h2.connect(s1)
 s1.connect(c1)
-'''
+```
 
 ### Setting IP into nodes
 To set the IP into the nodes you must pass the IP address, its network mask and the reference to the node that it is connected to. The network mask is an integer that represents the network mask, for example, the network mask '255.255.255.0' correspond to 24.
 
-'''
+```
 h1.setIp('10.0.0.1', 24, s1)
 h2.setIp('10.0.0.2', 24, s1)
 s1.setIp('10.0.0.3', 24)
 c1.setIp('10.0.0.4', 24, s1)
-'''
+```
 
 ### Set up the controller
 By default, the Controller instance creates a Docker container with the Ryu controller installer inside of it. To instantiate the controller and connect it to a switch you must execute:
 
-'''
+```
 c1.initController('10.0.0.4', 9001)
 s1.setController('10.0.0.4', 9001)
-'''
+```
 
 Verify if the controller and the switch can communicate successfully with each other.
 
 ### Enable connection to Internet
 To enable connection to Internet, the tool must create an interface from the container to the host. The IP parameter of "connectToInternet" can be any address that does not conflict with another already existing subnet on host and this address will be the default gateway for all the other nodes.
 
-'''
+```
 s1.connectToInternet('10.0.0.5', 24)
-'''
+```
 
 ### Set Default Gateway
 To enable all the other nodes to have access to the Internet, it must be defined the default gateway inside each container to the configured address in the previous section.
 
-'''
+```
 h1.setDefaultGateway('10.0.0.5', s1)
 h2.setDefaultGateway('10.0.0.5', s1)
 c1.setDefaultGateway('10.0.0.5', s1)
-'''
+```
