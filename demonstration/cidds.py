@@ -137,7 +137,7 @@ def unmakeChanges():
 
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
-    unmakeChanges(nodes)
+    unmakeChanges()
     sys.exit(0)
 
 
@@ -151,7 +151,7 @@ def collectLogs():
 
 
 def printTerm(string: str) -> None:
-    subprocess.run(f"echo -e \"{string}\n\"", shell=True)
+    subprocess.run(f"echo \"{string}\"", shell=True)
 
 
 try:

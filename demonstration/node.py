@@ -105,7 +105,7 @@ class Node:
             #if node._Switch__collect: node._Switch__collectFlows(self)
 
     
-    def connectToInternet(self, hostIP, hostMask) -> None:
+    def connectToInternet(self, hostIP: str, hostMask: int) -> None:
         peer1Name = f"veth-{self.getNodeName()}-host"
         peer2Name = f"veth-host-{self.getNodeName()}"
 
@@ -152,7 +152,7 @@ class Node:
     # Brief: Set Ip to an interface (the ip must be set only after connecting it to a container, because)
     # Params:
     #   String destinationIp: The destination IP address of the gateway in format "XXX.XXX.XXX.XXX"
-    #   String node: Reference to the node that will serve as gateway
+    #   String node: Reference to node that will serve as the first hop to forward the packets to the gateway, this reference node must be already connected to it
     # Return:
     #   None
     def setDefaultGateway(self, destinationIp: str, node: Node) -> None:

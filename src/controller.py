@@ -42,7 +42,7 @@ class Controller(Node):
     def initController(self, ip:str, port: int, command=[]):
         try:
             if len(command) == 0:
-                subprocess.run(f"docker exec {self.getNodeName()} ryu-manager --ofp-listen-host={ip} --ofp-tcp-listen-port={port} /home/controller.py > logs/controller{self.getNodeName()}.log 2>&1 &", shell=True)
+                subprocess.run(f"docker exec {self.getNodeName()} ryu-manager --ofp-listen-host={ip} --ofp-tcp-listen-port={port} /home/controller.py 2>&1 &", shell=True)
             else:
                 for c in command: subprocess.run(c, shell=True)
         except Exception as ex:
