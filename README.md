@@ -119,3 +119,13 @@ h1.setDefaultGateway('10.0.0.5', s1)
 h2.setDefaultGateway('10.0.0.5', s1)
 c1.setDefaultGateway('10.0.0.5', s1)
 ```
+
+### Deleting Nodes
+To delete the nodes execute the following commands:
+
+```
+h1.delete()
+h2.delete()
+s1.delete()
+c1.delete()
+```
