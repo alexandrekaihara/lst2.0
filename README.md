@@ -11,7 +11,7 @@ This project provides pre-built Docker images to build a small business environm
 ## System Requirements
 Your machine must be using a Linux distribution. In our experiments, were used a Ubuntu Server version 20.04.2 LTS virtual machine installed on Virtualbox version 6.1.26 configured with 15 GB RAM, 4 CPU cores e 32 GB memory disk space.
 
-## Dependencies
+## Installation
 All the dependencies consists of:
 - Docker (version 20.10.7)
 - Python (version 3.8.10)
