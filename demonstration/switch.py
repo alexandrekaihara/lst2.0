@@ -27,6 +27,7 @@ class Switch(Node):
     #   None
     def __init__(self, name: str, collectMetrics=False, collectTo=''):
         super().__init__(name)
+        self.__collect = False
         if collectMetrics:
             self.__collect = True
             self.__collectTo = collectTo+'/'+self.getNodeName()
@@ -59,9 +60,9 @@ class Switch(Node):
     #   String port: Controller's port
     # Return:
     #   None
-    def setController(self, ip:str, port: str):
+    def setController(self, ip:str, port: int) -> None:
         try:
-            subprocess.run(f"docker exec {self.getNodeName()} ovs-vsctl set-controller {self.getNodeName()} tcp:{ip}:{port}", shell=True)
+            subprocess.run(f"docker exec {self.getNodeName()} ovs-vsctl set-controller {self.getNodeName()} tcp:{ip}:{str(port)}", shell=True)
         except Exception as ex:
             logging.error(f"Error connecting switch {self.getNodeName()} to controller on IP {ip}/{port}: {str(ex)}")
             raise Exception(f"Error connecting switch {self.getNodeName()} to controller on IP {ip}/{port}: {str(ex)}")
