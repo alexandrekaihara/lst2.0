@@ -157,44 +157,44 @@ def printTerm(string: str) -> None:
 # Capture the ctrl+c
 signal.signal(signal.SIGINT, signal_handler)
 
-#try:
-printTerm("LST 2.0  Copyright (C) 2022\n\n\tThis program comes with ABSOLUTELY NO WARRANTY;\n\tThis is free software, and you are welcome to redistribute it\n\tunder certain conditions;\n\n")
-printTerm("[LST2.0] Iniciando o Experimento")    
-# Create folder to store the 
-subprocess.run("mkdir flows 2>/dev/null", shell=True)
+try:
+    printTerm("LST 2.0  Copyright (C) 2022\n\n\tThis program comes with ABSOLUTELY NO WARRANTY;\n\tThis is free software, and you are welcome to redistribute it\n\tunder certain conditions;\n\n")
+    printTerm("[LST2.0] Iniciando o Experimento")    
+    # Create folder to store the 
+    subprocess.run("mkdir flows 2>/dev/null", shell=True)
 
-# Create Bridges and connect them
-createBridge('brint', brint_ip, int_gateway)
-createBridge('brex', brex_ip, ex_gateway)
-nodes['brex'].connect(nodes['brint'])
+    # Create Bridges and connect them
+    createBridge('brint', brint_ip, int_gateway)
+    createBridge('brex', brex_ip, ex_gateway)
+    nodes['brex'].connect(nodes['brint'])
 
-subprocess.run(f"ip route add 192.168.200.0/24 dev veth-host-brint", shell=True)
-subprocess.run(f"ip route add 192.168.210.0/24 dev veth-host-brint", shell=True)
-subprocess.run(f"ip route add 192.168.220.0/24 dev veth-host-brint", shell=True)
+    subprocess.run(f"ip route add 192.168.200.0/24 dev veth-host-brint", shell=True)
+    subprocess.run(f"ip route add 192.168.210.0/24 dev veth-host-brint", shell=True)
+    subprocess.run(f"ip route add 192.168.220.0/24 dev veth-host-brint", shell=True)
 
-# Create seafile server
-nodes['seafile'] = Seafile('seafile')
-nodes['seafile'].instantiate()
-setNetworkConfig(nodes['seafile'], nodes['brint'], external_subnet, 1, setFiles=False)
-nodes['seafile'].updateServerConfig()
+    # Create seafile server
+    nodes['seafile'] = Seafile('seafile')
+    nodes['seafile'].instantiate()
+    setNetworkConfig(nodes['seafile'], nodes['brint'], external_subnet, 1, setFiles=False)
+    nodes['seafile'].updateServerConfig()
 
-# Create controllers
-createController('c1', 'brint', c1_ip, c1port)
-createController('c2', 'brex', c1_ip, c1port)
+    # Create controllers
+    createController('c1', 'brint', c1_ip, c1port)
+    createController('c2', 'brex', c1_ip, c1port)
 
-# Create server subnet
-createServer('mail',   mailserver,   server_subnet, 1)
-createServer('file',   fileserver,   server_subnet, 2)
-createServer('web',    webserver,    server_subnet, 3)
-createServer('backup', backupserver, server_subnet, 4)
+    # Create server subnet
+    createServer('mail',   mailserver,   server_subnet, 1)
+    createServer('file',   fileserver,   server_subnet, 2)
+    createServer('web',    webserver,    server_subnet, 3)
+    createServer('backup', backupserver, server_subnet, 4)
 
-# Set Management Subnet
-createPrinter('mprinter', management_subnet)
-createLinuxClient('m1', nodes['brint'], management_subnet, 2)
-createLinuxClient('m2', nodes['brint'], management_subnet, 3)
-createLinuxClient('m3', nodes['brint'], management_subnet, 4)
-createLinuxClient('m4', nodes['brint'], management_subnet, 5)
-    
+    # Set Management Subnet
+    createPrinter('mprinter', management_subnet)
+    createLinuxClient('m1', nodes['brint'], management_subnet, 2)
+    createLinuxClient('m2', nodes['brint'], management_subnet, 3)
+    createLinuxClient('m3', nodes['brint'], management_subnet, 4)
+    createLinuxClient('m4', nodes['brint'], management_subnet, 5)
+        
     # Set Office Subnet
     createPrinter('oprinter', office_subnet)
     createLinuxClient('o1', nodes['brint'], office_subnet, 2)
