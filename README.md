@@ -44,4 +44,4 @@ To use the newly built image in the experiment, access the "lst2.0/demonstration
 As shown in the section above, the "cidds.py" is an example of how to create a topology with LST 2.0. The following subsections will explain how to execute the basic configurations inside the testbed.
 
 ### Create network node
-To create a network node it is necessary to create an instance of [Switch]{lst2.0/src/Switch.py}
+To create a network node it is necessary to create an instance of [Switch](lst2.0/src/Switch.py)
