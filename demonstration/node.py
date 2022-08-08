@@ -99,10 +99,8 @@ class Node:
 
         if self.__class__.__name__ == 'Switch':
             self._Switch__createPort(self.getNodeName(), self.__getThisInterfaceName(node))
-            #if self._Switch__collect: self._Switch__collectFlows(node)
         if node.__class__.__name__ == 'Switch':
             node._Switch__createPort(node.getNodeName(), node.__getThisInterfaceName(self))
-            #if node._Switch__collect: node._Switch__collectFlows(self)
 
     
     def connectToInternet(self, hostIP: str, hostMask: int) -> None:
