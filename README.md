@@ -1,83 +1,131 @@
-# Lightweight SDN Testbed (LST)
+# Lightweight SDN Testbed (LST) 2.0
 ## Description
-There are many Emulated Testbeds proposed for Software-Defined Networking (SDN). Nonetheless, there are still few studies that focus on security. And some of them are restricted to the context in which it was designed and/or do not always meet requirements such as easy installation and configuration, topology configurability and low cost, harming the reusability of the tool. Aiming to fulfill the identified gap, we propose the Lightweight SDN Testbed (LST), an easy-to-use tool for local executions for SDN and security studies. 
+Not all emulated testbeds are suitable for security experimentation. Often security testbeds are restricted to their application context or are based on other technologies which have configurability and security application limitations (\textit{e.g.} Mininet). While other proposals allow greater configurability, they do not focus on security applications or are not inserted in the context of SDN networks. To address the identified research gap, the Lightweight SDN Testbed (\prop) is proposed. \prop is a lightweight tool capable of supporting different application contexts both for security and SDN networks programmatically and in real-time through Python. It is possible to monitor the network and collect metrics using Netflow, sFlow, IPFIX, or CICFlowMeter. In addition, pre-built Docker images are available for emulating both benign and malicious network flows.
 
-The facility provided by this tool is due to the possibility of configuring the experiment from a single JSON file. You can define the number of machines, the Docker image, the behavior of clients, the IP, and the subnet. Another facility is that the Docker images encapsulate the dependencies and the configuration process. Thus, it reduces the number of dependencies needed to set up the experiment. And the creation of machines is simplified and faster because the configuration must be done only during the creation of the Docker image.
+This tool aims to attend the demands of the most diverse study scenarios in SDN and security networks, through an interface with a set of reduced methods, but which allow high flexibility in the configuration and generation of customized topologies. LST 2.0 is mainly based on containers for generating network nodes and all network configuration and behavior is done programmatically. The tool is organized through a set of well-defined methods belonging to a hierarchy of classes, whose parent class, named Node, has all the attributes and minimal methods to instantiate, delete and configure any container. Thus, users can develop their own classes inheriting the attributes of the Node class and focusing only on the specific settings for the study.
+
+By default, three classes are implemented that are specializations of the Node class. The Host class allows you to create containers that will be common nodes that will consume some service on the network. The Switch class allows you to create virtual switches whose network configuration is specific to forward packets between ports of a single bridge contained in the container and also to connect to a controller on a specific IP and port. If no controller is assigned to the switch, the switch will only perform basic network layer functions and also if no IP is assigned to it, it will be a link layer switch. The Controller class allows you to create containers that can instantiate one or more controllers.
 
 This project provides pre-built Docker images to build a small business environment to emulate benign and malicious flows to assess defense mechanisms. This experiment is a modification of a work developed by Markus Ring et. al. (available at: https://www.hs-coburg.de/cidds), which provided all the scripts to emulate the small business environment. This environment includes several clients and typical servers (e.g. e-mail and Web server). 
 
 ## System Requirements
 Your machine must be using a Linux distribution. In our experiments, were used a Ubuntu Server version 20.04.2 LTS virtual machine installed on Virtualbox version 6.1.26 configured with 15 GB RAM, 4 CPU cores e 32 GB memory disk space.
 
-## Dependencies
+## Installation
 All the dependencies consists of:
 - Docker (version 20.10.7)
-- Docker Compose (version 1.25.0)
-- Pip3 (22.0.3)
-- OpenvSwitch (2.13.3)
+- Python (version 3.8.10)
 
 We provide a Bash script to install all the needed dependencies. To install all dependencies, execute:
 
-> sudo git clone https://github.com/alexandrekaihara/lst
+> sudo git clone https://github.com/alexandrekaihara/lst2.0
 
-> cd lst/experiment
+> cd lst2.0/src
 
 > sudo chmod +x dependencies.sh && sudo ./dependencies.sh
 
 ## Execution
 To execute the script to set up the network topology, execute these commands:
 
-> sudo chmod +x setup.sh
+> cd lst2.0/demonstration
 
-> sudo ./setup.sh partial_experiment.json
+> python3 cidds.py
 
-If you want to finish the experiment e get back to your original network configuration, press CTRL + C once.
+If you want to finish the experiment, press CTRL + C once.
 
 ## Docker image build
 If it is necessary to make any change on the docker images, check the "docker" folder located on the root directory of this repository. To build any docker image, access the folder containing its "Dockerfile" file and execute:
 
-> docker build --network=host --tag mdewinged/lst:NEW_CONTAINER_NAME .
+> docker build --network=host --tag=NEWNAME .
 
-To use the newly built image in the experiment, access the "lst/experiment" folder and change the file named as "variables" and find the respective image and change its value for the "NEW_CONTAINER_NAME" you have attributed. For example, you have built another version of the webserver and named as webserver2. Thus, you need to change the value of WEB=webserver2 in the "variable" file. 
+To use the newly built image in the experiment, access the "lst2.0/demonstration/cidds.py" file and set "dockerImage" parameter of the "intantiate" method with NEWNAME.
 
-The only image that does not follow the command above is the seafileserver. Due to a particular characteristic of its configuration, the seafileserver must create a network interface to build the image, and its IP address in the experiment is static (default is 192.168.50.1). If you need to change the IP on which the server listens, a rebuild is necessary with the new IP. More detailed instructions are located inside the "lst/docker/seafileserver" folder.
+## Creating Your Own Experiment
+As shown in the section above, the "cidds.py" is an example of how to create a topology with LST 2.0. The following subsections will explain how to execute the basic configurations to instantiate e linear SDN topology with two nodes.
 
-## Creating Own .JSON Experiment
-As shown in the section above, the "setup.sh" script expects a JSON file as an argument. This file represents all the machines that will be used in the experiment. You can define the Docker image, the subnet, the IP address, the DNS server, bridge to which the container will be connected. 
+It is important to mention that all the configuration methods must be used after creating the container using the "instantiate" method.
 
-In this JSON file, all containers are defined using a dictionary with these fields:
+### Create network node
+To create a network node it is necessary to create an instance of [Switch](lst2.0/src/Switch.py), [Host](lst2.0/src/Host) or [Controller](lst2.0/src/Controller), passing the name of the node as a parameter.
+
+> cd lst2.0/src
+> python3
+
+Then execute the following commands:
 
 ```
-"external_${WEB}": {
-        "image":"${REPOSITORY}:${WEB}",
-        "IP":"192.168.${ESUBNET}.2",
-        "bridge":"${EXTERNAL}",
-        "depends_on": [],
-        "dns":"8.8.8.8"
-  }
+from host import Host
+from switch import Switch
+from controller import Controller
+
+h1 = Host('h1')
+h2 = Host('h2')
+s1 = Switch('s1')
+c1 = Controller('c1')
 ```
 
-The field "image" represents the repository name and the image name on Dockerhub. The "IP" field is the IP address assigned to the container in the experiment. The "bridge" is the name of the virtual Switch to which the container will be connected. The "depends_on" is a list of docker images names that need to be created before the creation of this container. And the "dns" is the IP of your DNS server.
+PS: You are responsible for keeping the instance of each node class in order to delete them at the end
 
-If you want to make modifications to the experiment and to run the clients and servers correctly, be aware of the following restrictions:
+Then is necessary to instantiate the controller using the instance of the class.
 
-- The "linuxclient" images has an additional field called "client_behaviour", which is the name of the client's behavior script (located in "lst/experiment/client_behaviour"). This file defines all the operations this client can do (e.g. access mail server, realize attacks, access web pages) and you can create yourn own; 
-- Make sure that you also create all the needed servers your clients will use. If you define a "linuxclient" behavior that uses a mail service, so you need to create an instance of  "mailserver";
-- "linuxclient" images also needs that the "printerserver", "mailserver", "backupserver", "fileserver" to be created first. Thus it needs to be declared on the "depends_on" field;
-- If you need the "seafileserver", it must be declared with the IP address that was defined during the building process of this docker image. The default IP is "192.168.50.1";
-- Do not repeat IP addresses;
-- Do not repeat dictionary names, because they will be used as the name of the container, and they can't be repeated.
+```
+h1.instantiate()
+h2.instantiate()
+s1.instantiate()
+c1.instantiate()
+```
 
-You can use environment variables inside the JSON. New environment variables can be defined on "lst/experiment/variables"
+### Connect nodes
+After instantiating nodes, you can connect them by using the "connect" method passing the instance of another node.
 
-## Issues
+```
+h1.connect(s1)
+h2.connect(s1)
+s1.connect(c1)
+```
 
-If any errors occur during the setup and execution o the experiment, check:
+### Setting IP into nodes
+To set the IP into the nodes you must pass the IP address, its network mask and the reference to the node that it is connected to. The network mask is an integer that represents the network mask, for example, the network mask '255.255.255.0' correspond to 24.
 
-- If there exist two definitions of the default gateway, remove one. It can cause problems to configure the Firewall permissions;
-- Verify if your computer already has defined subnets that may conflict with the subnets defined in the "lst/experiment/variable" file. It may affect the routing process and potentially break the configuration of a host because of IP address conflicts.
-- It is created an interface for each container following the pattern of "veth" + "subnet tag" + "host IP part". For example, the container has the IP 192.168.50.1, then its interface will be named veth50.1. Check if won't have any name conflict with your existing network interfaces to the ones that will be created for the experiment;
+```
+h1.setIp('10.0.0.1', 24, s1)
+h2.setIp('10.0.0.2', 24, s1)
+s1.setIp('10.0.0.3', 24)
+c1.setIp('10.0.0.4', 24, s1)
+```
 
-## Video
+### Set up the controller
+By default, the Controller instance creates a Docker container with the Ryu controller installer inside of it. To instantiate the controller and connect it to a switch you must execute:
 
-The link of the video for SBRC Salão de Ferramentas is available at https://www.youtube.com/watch?v=ln0Np3dH6kk
+```
+c1.initController('10.0.0.4', 9001)
+s1.setController('10.0.0.4', 9001)
+```
+
+Verify if the controller and the switch can communicate successfully with each other.
+
+### Enable connection to Internet
+To enable connection to Internet, the tool must create an interface from the container to the host. The IP parameter of "connectToInternet" can be any address that does not conflict with another already existing subnet on host and this address will be the default gateway for all the other nodes.
+
+```
+s1.connectToInternet('10.0.0.5', 24)
+```
+
+### Set Default Gateway
+To enable all the other nodes to have access to the Internet, it must be defined the default gateway inside each container to the configured address in the previous section.
+
+```
+h1.setDefaultGateway('10.0.0.5', s1)
+h2.setDefaultGateway('10.0.0.5', s1)
+c1.setDefaultGateway('10.0.0.5', s1)
+```
+
+### Deleting Nodes
+To delete the nodes execute the following commands:
+
+```
+h1.delete()
+h2.delete()
+s1.delete()
+c1.delete()
+```
