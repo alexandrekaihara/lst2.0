@@ -19,7 +19,7 @@
 FROM ubuntu:20.04
 
 RUN apt update \
-&& RUNLEVEL=1 apt install -y --no-install-recommends openvswitch-switch sudo net-tools iproute2 iputils-ping nano iptables wget unzip 
+&& RUNLEVEL=1 apt install -y --no-install-recommends openvswitch-switch sudo net-tools iproute2 iputils-ping nano iptables wget unzip tcpdump sudo default-jdk libpcap-dev
 
 # Start setup
 COPY setup.sh .
