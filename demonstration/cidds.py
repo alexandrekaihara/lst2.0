@@ -158,6 +158,7 @@ def printTerm(string: str) -> None:
 signal.signal(signal.SIGINT, signal_handler)
 
 try:
+    printTerm("LST  Copyright (C) 2022  Alexandre Mitsuru Kaihara\n\n\tThis program comes with ABSOLUTELY NO WARRANTY;\n\tThis is free software, and you are welcome to redistribute it\n\tunder certain conditions;\n\n")
     printTerm("[LST2.0] Iniciando o Experimento")    
     # Create folder to store the 
     subprocess.run("mkdir flows 2>/dev/null", shell=True)
