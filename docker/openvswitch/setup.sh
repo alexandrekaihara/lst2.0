@@ -34,5 +34,5 @@ mkdir collecteddata
 
 sed -i "s/trap/#trap/g" capture_interface_pcap.sh
 sed -i "s/trap/#trap/g" convert_pcap_csv.sh
-
+sed -i "s/sudo tcpdump/sudo tcpdump -Z root/g" capture_interface_pcap.sh
 
