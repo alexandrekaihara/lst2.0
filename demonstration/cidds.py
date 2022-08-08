@@ -154,6 +154,9 @@ def printTerm(string: str) -> None:
     subprocess.run(f"echo \"{string}\"", shell=True)
 
 
+# Capture the ctrl+c
+signal.signal(signal.SIGINT, signal_handler)
+
 try:
     printTerm("[LST2.0] Iniciando o Experimento")    
     # Create folder to store the 
@@ -229,6 +232,5 @@ except Exception as ex:
     unmakeChanges()
     raise Exception(str(ex))
 
-signal.signal(signal.SIGINT, signal_handler)
 print('[LST2.0] Press CTRL+C to finish experiment')
 signal.pause()
