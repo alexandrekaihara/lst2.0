@@ -41,9 +41,8 @@ class Switch(Node):
     def instantiate(self, image='mdewinged/cidds:openvswitch', controllerIP='', controllerPort=-1) -> None:
         mount = ''
         if self.__collect: mount = f'-v {self.__collectTo}:/TCPDUMP_and_CICFlowMeter-master/csv'
-        subprocess.run(f"chmod +x instantiate_switch.sh && ./instantiate_switch.sh {self.getNodeName()}",shell=True)
         self._Node__enableNamespace(self.getNodeName())
-        #super().instantiate(dockerCommand=f"docker run -d --network=none --privileged {mount} --name={self.getNodeName()} {image}")
+        super().instantiate(dockerCommand=f"docker run -d --network=none --privileged {mount} --name={self.getNodeName()} {image}")
         try:
             # Create bridge and set it up
             subprocess.run(f"docker exec {self.getNodeName()} ovs-vsctl add-br {self.getNodeName()}", shell=True)
