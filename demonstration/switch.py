@@ -42,6 +42,7 @@ class Switch(Node):
         mount = ''
         if self.__collect: mount = f'-v {self.__collectTo}:/TCPDUMP_and_CICFlowMeter-master/csv'
         subprocess.run(f"chmod +x instantiate_switch.sh && ./instantiate_switch.sh {self.getNodeName()}",shell=True)
+        self._Node__enableNamespace(self.getNodeName())
         #super().instantiate(dockerCommand=f"docker run -d --network=none --privileged {mount} --name={self.getNodeName()} {image}")
         try:
             # Create bridge and set it up
