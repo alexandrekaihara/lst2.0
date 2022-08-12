@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 
 #!/usr/bin/env sh
 
@@ -35,7 +35,7 @@ echo "APP_HOME: $APP_HOME"
 APP_NAME="CICFlowMeter"
 APP_BASE_NAME=`basename "$0"`
 
-# Add default JVM options here. You can also use JAVA_OPTS and CIC_FLOW_METER_OPTS to pass JVM options to this scrip>
+# Add default JVM options here. You can also use JAVA_OPTS and CIC_FLOW_METER_OPTS to pass JVM options to this script.
 # DEFAULT_JVM_OPTS='"-Djava.library.path=../lib/native"'
 # DEFAULT_JVM_OPTS='"-Djava.library.path='"\\\"$APP_HOME/lib/native\\\""'"'
 DEFAULT_JVM_OPTS='"-Djava.library.path='$APP_HOME/lib/native'"'
@@ -96,7 +96,8 @@ CLASSPATH=$CLASSPATH:$APP_HOME/lib/log4j-core-2.11.0.jar
 CLASSPATH=$CLASSPATH:$APP_HOME/lib/slf4j-api-1.7.25.jar
 CLASSPATH=$CLASSPATH:$APP_HOME/lib/slf4j-log4j12-1.7.25.jar
 CLASSPATH=$CLASSPATH:$APP_HOME/lib/tika-core-1.17.jar
-CLASSPATH=$CLASSPATH:$APP_HOME/lib/weka-stable-3.6.14.jar
+CLASSPATH=$CLASSPATH:$APP_HOME/lib/weka-stable-3.6.14.jar   
+CLASSPATH=${CLASSPATH:1}
 echo "CLASSPATH: $CLASSPATH"
 
 # Determine the Java command to use to start the JVM.
@@ -109,14 +110,12 @@ if [ -n "$JAVA_HOME" ] ; then
     fi
     if [ ! -x "$JAVACMD" ] ; then
         die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
-
 Please set the JAVA_HOME variable in your environment to match the
 location of your Java installation."
     fi
 else
     JAVACMD="java"
     which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
-
 Please set the JAVA_HOME variable in your environment to match the
 location of your Java installation."
 fi
@@ -195,9 +194,9 @@ save () {
 APP_ARGS=$(save "$@")
 
 # Collect all arguments for the java command, following the shell quoting and substitution rules
-#eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $CIC_FLOW_METER_OPTS -classpath "\"$CLASSPATH\"" cic.cs.unb.ca.ifm.App "$A>
+#eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $CIC_FLOW_METER_OPTS -classpath "\"$CLASSPATH\"" cic.cs.unb.ca.ifm.App "$APP_ARGS"
 # Without GUI
-eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $CIC_FLOW_METER_OPTS -classpath "\"$CLASSPATH\"" cic.cs.unb.ca.ifm.CICFlowM>
+eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $CIC_FLOW_METER_OPTS -classpath "\"$CLASSPATH\"" cic.cs.unb.ca.ifm.CICFlowMeter "$APP_ARGS"
 # The -- is the standard "don't treat anything following this as an option"
 
 # by default we should be in the correct project dir, but when run from Finder on Mac, the cwd is wrong
@@ -208,13 +207,3 @@ fi
 #echo "java args: $@"
 
 exec "$JAVACMD" "$@"
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
