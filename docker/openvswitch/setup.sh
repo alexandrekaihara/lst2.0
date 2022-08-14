@@ -28,12 +28,10 @@ do
 done
 rm master.zip
 
+# Fix configurations of CICFlowMeter for Docker containers
+mv /usr/sbin/tcpdump /usr/bin/tcpdump
 mv CICFlowMeter /TCPDUMP_and_CICFlowMeter-master/CICFlowMeters/CICFlowMeter-4.0/bin/CICFlowMeter
-
 cd /TCPDUMP_and_CICFlowMeter-master
-
-mkdir collecteddata
-
 sed -i "s/trap/#trap/g" capture_interface_pcap.sh
 sed -i "s/trap/#trap/g" convert_pcap_csv.sh
 sed -i "s/sudo tcpdump/sudo tcpdump -Z root/g" capture_interface_pcap.sh

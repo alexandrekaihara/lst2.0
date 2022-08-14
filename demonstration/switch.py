@@ -91,15 +91,6 @@ class Switch(Node):
         interfaceName = self.getNodeName()
         self._Node__setIp(ip, mask, interfaceName)
     
-    # Brief: Set default route to forward all incoming packets to s1 bridge and let the bridge handle the forwarding
-    # Params:
-    # Return:
-    def __addDefaultRoute(self) -> None:
-        try:
-            subprocess.run(f"docker exec {self.getNodeName()} ip route add 0.0.0.0/0 dev {self.getNodeName()}", shell=True)
-        except Exception as ex:
-            logging.error(f"Error adding route default route for switch {self.getNodeName()}: {str(ex)}")
-            raise Exception(f"Error adding route default route for switch {self.getNodeName()}: {str(ex)}")
 
     def enableNetflow(self, destIp: str, destPort: int, activeTimeout=60)  -> None:
         try:
@@ -151,3 +142,12 @@ class Switch(Node):
             logging.error(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
             raise Exception(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
 
+    # Brief: Set default route to forward all incoming packets to s1 bridge and let the bridge handle the forwarding
+    # Params:
+    # Return:
+    def __addDefaultRoute(self) -> None:
+        try:
+            subprocess.run(f"docker exec {self.getNodeName()} ip route add 0.0.0.0/0 dev {self.getNodeName()}", shell=True)
+        except Exception as ex:
+            logging.error(f"Error adding route default route for switch {self.getNodeName()}: {str(ex)}")
+            raise Exception(f"Error adding route default route for switch {self.getNodeName()}: {str(ex)}")

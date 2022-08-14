@@ -75,6 +75,7 @@ case "`uname`" in
     ;;
 esac
 
+
 CLASSPATH=$CLASSPATH:$APP_HOME/lib/CICFlowMeter-4.0.jar
 CLASSPATH=$CLASSPATH:$APP_HOME/lib/animal-sniffer-annotations-1.14.jar
 CLASSPATH=$CLASSPATH:$APP_HOME/lib/checker-compat-qual-2.0.0.jar
