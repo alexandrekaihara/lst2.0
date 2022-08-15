@@ -2,8 +2,8 @@
 
 interface=$1
 output_dir=$2
-user=$3
-rotate_interval=$4
+user=root
+rotate_interval=$3
 
 [[ "$(grep -c "$interface" /proc/net/dev)" == "0" ]] && echo "The interface is NOT found!" && exit 255
 [[ ! -d "$output_dir" ]] && echo "The output directory does NOT exist!" && exit 255
@@ -48,6 +48,6 @@ options="-n -nn -N -s 0"
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # On the same directory.
 post_rotate_command="${script_dir}"/convert_pcap_csv.sh
 
-sudo tcpdump ${options} -z "${post_rotate_command}" -i ${interface} -G ${rotate_interval} -w "${output_file_format}" > /dev/null
+sudo tcpdump -Z root ${options} -z "${post_rotate_command}" -i ${interface} -G ${rotate_interval} -w "${output_file_format}" > /dev/null
 
 #sudo chown 1000:1000 "${output_dir}"/*

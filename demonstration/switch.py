@@ -138,7 +138,7 @@ class Switch(Node):
     def __collectFlows(self) -> None:
         try:
             subprocess.run(f"docker exec {self.getNodeName()} chmod +x /TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh", shell=True)
-            subprocess.run(f"docker exec {self.getNodeName()} ./TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh {self.getNodeName()} /TCPDUMP_and_CICFlowMeter-master &", shell=True)
+            subprocess.run(f"docker exec {self.getNodeName()} ./TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh {self.getNodeName()} /TCPDUMP_and_CICFlowMeter-master > /dev/null &", shell=True)
         except Exception as ex:
             logging.error(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
             raise Exception(f"Error set the collector on {self.getNodeName()}: {str(ex)}")

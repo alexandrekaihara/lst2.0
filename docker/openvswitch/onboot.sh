@@ -20,5 +20,7 @@
 
 # Start container and keep alive
 chmod +x /TCPDUMP_and_CICFlowMeter-master/CICFlowMeters/CICFlowMeter-4.0/bin/CICFlowMeter
+chmod +x /TCPDUMP_and_CICFlowMeter-master/convert_pcap_csv.sh
+chmod +x /TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh
 sudo /usr/share/openvswitch/scripts/ovs-ctl start
 tail -f /dev/null
