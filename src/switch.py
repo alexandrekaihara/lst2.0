@@ -25,12 +25,13 @@ class Switch(Node):
     # Params:
     # Return:
     #   None
-    def __init__(self, name: str, collectMetrics=False, collectTo=''):
+    def __init__(self, name: str, collectMetrics=False, collectTo='', convertPeriod=60):
         super().__init__(name)
         self.__collect = False
         if collectMetrics:
             self.__collect = True
             self.__collectTo = collectTo+'/'+self.getNodeName()
+            self.__convertPeriod = convertPeriod
             subprocess.run(f"mkdir {self.__collectTo} 2>/dev/null", shell=True)
 
 
@@ -41,9 +42,8 @@ class Switch(Node):
     def instantiate(self, image='mdewinged/cidds:openvswitch', controllerIP='', controllerPort=-1) -> None:
         mount = ''
         if self.__collect: mount = f'-v {self.__collectTo}:/TCPDUMP_and_CICFlowMeter-master/csv'
-        subprocess.run(f"chmod +x instantiate_switch.sh && ./instantiate_switch.sh {self.getNodeName()}",shell=True)
         self._Node__enableNamespace(self.getNodeName())
-        #super().instantiate(dockerCommand=f"docker run -d --network=none --privileged {mount} --name={self.getNodeName()} {image}")
+        super().instantiate(dockerCommand=f"docker run -d --network=none --privileged {mount} --name={self.getNodeName()} {image}")
         try:
             # Create bridge and set it up
             subprocess.run(f"docker exec {self.getNodeName()} ovs-vsctl add-br {self.getNodeName()}", shell=True)
@@ -92,15 +92,6 @@ class Switch(Node):
         interfaceName = self.getNodeName()
         self._Node__setIp(ip, mask, interfaceName)
     
-    # Brief: Set default route to forward all incoming packets to s1 bridge and let the bridge handle the forwarding
-    # Params:
-    # Return:
-    def __addDefaultRoute(self) -> None:
-        try:
-            subprocess.run(f"docker exec {self.getNodeName()} ip route add 0.0.0.0/0 dev {self.getNodeName()}", shell=True)
-        except Exception as ex:
-            logging.error(f"Error adding route default route for switch {self.getNodeName()}: {str(ex)}")
-            raise Exception(f"Error adding route default route for switch {self.getNodeName()}: {str(ex)}")
 
     def enableNetflow(self, destIp: str, destPort: int, activeTimeout=60)  -> None:
         try:
@@ -152,3 +143,12 @@ class Switch(Node):
             logging.error(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
             raise Exception(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
 
+    # Brief: Set default route to forward all incoming packets to s1 bridge and let the bridge handle the forwarding
+    # Params:
+    # Return:
+    def __addDefaultRoute(self) -> None:
+        try:
+            subprocess.run(f"docker exec {self.getNodeName()} ip route add 0.0.0.0/0 dev {self.getNodeName()}", shell=True)
+        except Exception as ex:
+            logging.error(f"Error adding route default route for switch {self.getNodeName()}: {str(ex)}")
+            raise Exception(f"Error adding route default route for switch {self.getNodeName()}: {str(ex)}")

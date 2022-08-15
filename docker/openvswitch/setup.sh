@@ -32,8 +32,8 @@ rm master.zip
 mv /usr/sbin/tcpdump /usr/bin/tcpdump
 mv CICFlowMeter /TCPDUMP_and_CICFlowMeter-master/CICFlowMeters/CICFlowMeter-4.0/bin/CICFlowMeter
 mv convert_pcap_csv.sh /TCPDUMP_and_CICFlowMeter-master/convert_pcap_csv.sh
+mv capture_interface_pcap.sh /TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh
 cd /TCPDUMP_and_CICFlowMeter-master
-sed -i "s/trap/#trap/g" capture_interface_pcap.sh
 sed -i "s/sudo tcpdump/sudo tcpdump -Z root/g" capture_interface_pcap.sh
 
 
