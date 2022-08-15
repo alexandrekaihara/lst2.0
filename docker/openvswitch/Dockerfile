@@ -23,6 +23,7 @@ RUN apt update \
 
 # Start setup
 COPY CICFlowMeter .
+COPY convert_pcap_csv.sh .
 COPY setup.sh .
 RUN chmod +x setup.sh\
 && ./setup.sh
