@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #
 # Copyright (C) 2022 Alexandre Mitsuru Kaihara
 #
@@ -16,20 +18,6 @@
 #
 
 
-FROM ubuntu:20.04
-
-RUN apt update \
-&& RUNLEVEL=1 apt install -y --no-install-recommends openvswitch-switch sudo net-tools iproute2 iputils-ping nano iptables wget unzip tcpdump sudo default-jdk libpcap-dev
-
-# Start setup
-COPY setup.sh .
-RUN chmod +x setup.sh\
-&& ./setup.sh
-
-COPY onboot.sh /home
-RUN chmod +x /home/onboot.sh
-CMD ["./home/onboot.sh"]
-
-# For conecting via Open SSL
-EXPOSE 22
-
+# Start container and keep alive
+sudo /usr/share/openvswitch/scripts/ovs-ctl start
+tail -f /dev/null

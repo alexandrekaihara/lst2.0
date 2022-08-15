@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #
 # Copyright (C) 2022 Alexandre Mitsuru Kaihara
 #
@@ -14,22 +16,4 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-
-FROM ubuntu:20.04
-
-RUN apt update \
-&& RUNLEVEL=1 apt install -y --no-install-recommends openvswitch-switch sudo net-tools iproute2 iputils-ping nano iptables wget unzip tcpdump sudo default-jdk libpcap-dev
-
-# Start setup
-COPY setup.sh .
-RUN chmod +x setup.sh\
-&& ./setup.sh
-
-COPY onboot.sh /home
-RUN chmod +x /home/onboot.sh
-CMD ["./home/onboot.sh"]
-
-# For conecting via Open SSL
-EXPOSE 22
 
