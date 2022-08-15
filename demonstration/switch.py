@@ -32,7 +32,7 @@ class Switch(Node):
             self.__collect = True
             self.__collectTo = collectTo+'/'+self.getNodeName()
             self.__rotateInterval = rotateInterval
-            subprocess.run(f"mkdir {self.__collectTo} 2>/dev/null", shell=True)
+            subprocess.run(f"mkdir {self.__collectTo} > /dev/null 2>&1", shell=True)
 
 
     # Brief: Instantiate an OpenvSwitch switch container
@@ -42,7 +42,6 @@ class Switch(Node):
     def instantiate(self, image='mdewinged/cidds:openvswitch', controllerIP='', controllerPort=-1) -> None:
         mount = ''
         if self.__collect: mount = f'-v {self.__collectTo}:/TCPDUMP_and_CICFlowMeter-master/csv'
-        self._Node__enableNamespace(self.getNodeName())
         super().instantiate(dockerCommand=f"docker run -d --network=none --privileged {mount} --name={self.getNodeName()} {image}")
         try:
             # Create bridge and set it up
@@ -138,7 +137,7 @@ class Switch(Node):
     def __collectFlows(self) -> None:
         try:
             subprocess.run(f"docker exec {self.getNodeName()} chmod +x /TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh", shell=True)
-            subprocess.run(f"docker exec {self.getNodeName()} ./TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh {self.getNodeName()} /TCPDUMP_and_CICFlowMeter-master {self.__rotateInterval} > /dev/null &", shell=True)
+            subprocess.run(f"docker exec {self.getNodeName()} ./TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh {self.getNodeName()} /TCPDUMP_and_CICFlowMeter-master {self.__rotateInterval} > /dev/null 2>&1 &", shell=True)
         except Exception as ex:
             logging.error(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
             raise Exception(f"Error set the collector on {self.getNodeName()}: {str(ex)}")

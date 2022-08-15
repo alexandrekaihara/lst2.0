@@ -46,7 +46,7 @@ class LinuxClient(Host):
 
 
 def setLinuxClientFileConfig(node: LinuxClient, subnet: str, behaviour: str):
-    printTerm(f"[LST2.0] ... Copying Configuration Files to Container")
+    printTerm(f"[LST2.0] Copying Configuration Files to Container {node.getNodeName()}")
     if subnet != external_subnet: aux = "internal"
     else: aux = "external"
     node.setAutomationScripts("automation")
