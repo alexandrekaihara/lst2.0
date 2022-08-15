@@ -25,13 +25,13 @@ class Switch(Node):
     # Params:
     # Return:
     #   None
-    def __init__(self, name: str, collectMetrics=False, collectTo='', convertPeriod=60):
+    def __init__(self, name: str, collectMetrics=False, collectTo='', rotateInterval=60):
         super().__init__(name)
         self.__collect = False
         if collectMetrics:
             self.__collect = True
             self.__collectTo = collectTo+'/'+self.getNodeName()
-            self.__convertPeriod = convertPeriod
+            self.__rotateInterval = rotateInterval
             subprocess.run(f"mkdir {self.__collectTo} 2>/dev/null", shell=True)
 
 
@@ -138,7 +138,7 @@ class Switch(Node):
     def __collectFlows(self) -> None:
         try:
             subprocess.run(f"docker exec {self.getNodeName()} chmod +x /TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh", shell=True)
-            subprocess.run(f"docker exec {self.getNodeName()} ./TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh {self.getNodeName()} /TCPDUMP_and_CICFlowMeter-master > /dev/null &", shell=True)
+            subprocess.run(f"docker exec {self.getNodeName()} ./TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh {self.getNodeName()} /TCPDUMP_and_CICFlowMeter-master {self.__rotateInterval} > /dev/null &", shell=True)
         except Exception as ex:
             logging.error(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
             raise Exception(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
