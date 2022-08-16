@@ -25,22 +25,23 @@ class Switch(Node):
     # Params:
     # Return:
     #   None
-    def __init__(self, name: str, collectMetrics=False, hostPath='', containerPath=''):
+    def __init__(self, name: str, hostPath='', containerPath=''):
         super().__init__(name)
-        self.__collect = False
-        if collectMetrics:
-            self.__collect = True
+        self.__mount = False
+        if hostPath != '' and containerPath != '':
             self.__hostPath = hostPath+'/'+self.getNodeName()
             self.__containerPath = containerPath
-            subprocess.run(f"mkdir {self.__hostPath} > /dev/null 2>&1", shell=True)
+            self.__mount = True
+        else: 
+            raise Exception(f"Invalid hostPath and containerPath mount point on {self.getNodeName()}. hostPath and containerPath cannot be null")
 
     # Brief: Instantiate an OpenvSwitch switch container
     # Params:
     # Return:
     #   None
-    def instantiate(self, image='mdewinged/cidds:openvswitch', controllerIP='', controllerPort=-1,) -> None:
+    def instantiate(self, image='mdewinged/cidds:openvswitch', controllerIP='', controllerPort=-1) -> None:
         mount = ''
-        if self.__collect: mount = f'-v {self.__hostPath}:{self.__containerPath}'
+        if self.__mount: mount = f'-v {self.__hostPath}:{self.__containerPath}'
         super().instantiate(dockerCommand=f"docker run -d --network=none --privileged {mount} --name={self.getNodeName()} {image}")
         try:
             # Create bridge and set it up
@@ -137,8 +138,7 @@ class Switch(Node):
     #   List<Node> nodes: References of the nodes connected to this switch to sniff packets
     #   boolean sniffAll: If sniff all is set  
     # Return:
-    def collectFlows(self, nodes: list, rotateInterval=60, sniffAll=False) -> None:
-        if not self.__collect: raise Exception(f"Cannot collect flows on {self.getNodeName()}, instantiate the container with the collectMetrics set to True")
+    def collectFlows(self, nodes=[], path='', rotateInterval=60, sniffAll=False) -> None:
         try:
             interfaces = self.__getAllIntefaces()
             if sniffAll == False and len(nodes) > 0: 
@@ -148,7 +148,7 @@ class Switch(Node):
                 raise Exception(f"Expected at least one node reference to sniff packets on {self.getNodeName()} swithc")
             options = ['-i '+interface for interface in interfaces]
             options = ' '.join(options)
-            subprocess.run(f"docker exec {self.getNodeName()} tshark {options} -b duration:{rotateInterval} -w {self.__hostPath}/dump.pcap > /dev/null 2>&1 &", shell=True)
+            subprocess.run(f"docker exec {self.getNodeName()} tshark {options} -b duration:{rotateInterval} -w {path}/dump.pcap > /dev/null 2>&1 &", shell=True)
         except Exception as ex:
             logging.error(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
             raise Exception(f"Error set the collector on {self.getNodeName()}: {str(ex)}")

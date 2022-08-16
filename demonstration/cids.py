@@ -82,8 +82,10 @@ def setNetworkConfig(node: Node, bridge: Node, subnet: str, address: int, setFil
 
 def createBridge(name: str, ip: str, gatewayIp: str, netflowPort=9000) -> None: 
     printTerm(f"[LST2.0] Creating Switch {name}")
-    nodes[name] = Switch(name, True, getcwd()+'/flows', '/home/pcap')
-    nodes[name].run('mkdir /home/pcap')
+    subprocess(f"mkdir {getcwd()}/flows > /dev/null 2>&1", shell=True)
+    subprocess(f"mkdir {getcwd()}/flows/{name} > /dev/null 2>&1", shell=True)
+    nodes[name] = Switch(name, True, getcwd()+'/flows/'+name, '/home/pcap')
+    nodes[name].run('mkdir /home/pcap > /dev/null 2>&1')
     nodes[name].instantiate()
     printTerm("[LST2.0] ... Instantiating container")
     nodes[name].setIp(ip, 24)
@@ -229,6 +231,9 @@ try:
     #[setLinuxClientFileConfig(nodes[f'd{i}'], developer_subnet, 'developer') for i in range(3,12)]
     #[setLinuxClientFileConfig(nodes[f'd{i}'], developer_subnet, 'attacker') for i in range(12,14)]
     #[setLinuxClientFileConfig(nodes[f'e{i}'], developer_subnet, 'external_attacker') for i in range(1,3)]
+
+    nodes['brint'].collectFlows(path='home/pcap', sniffAll=True)
+    nodes['brex'].collectFlows(path='home/pcap', sniffAll=True)
 except Exception as ex:
     collectLogs()
     unmakeChanges()
