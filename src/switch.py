@@ -141,11 +141,12 @@ class Switch(Node):
     def collectFlows(self, nodes=[], path='', rotateInterval=60, sniffAll=False) -> None:
         try:
             interfaces = self._Node__getAllIntefaces()
-            if sniffAll == False and len(nodes) > 0: 
-                interfaces = [self._Node__getThisInterfaceName(node) for node in nodes]
-                interfaces.append(self.getNodeName())
-            else:
-                raise Exception(f"Expected at least one node reference to sniff packets on {self.getNodeName()} swithc")
+            if sniffAll == False:
+                if len(nodes) > 0: 
+                    interfaces = [self._Node__getThisInterfaceName(node) for node in nodes]
+                    interfaces.append(self.getNodeName())
+                else:
+                    raise Exception(f"Expected at least one node reference to sniff packets on {self.getNodeName()} switch")
             options = ['-i '+interface for interface in interfaces]
             options = ' '.join(options)
             subprocess.run(f"docker exec {self.getNodeName()} tshark {options} -b duration:{rotateInterval} -w {path}/dump.pcap > /dev/null 2>&1 &", shell=True)
