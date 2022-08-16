@@ -29,7 +29,7 @@ class Switch(Node):
         super().__init__(name)
         self.__mount = False
         if hostPath != '' and containerPath != '':
-            self.__hostPath = hostPath+'/'+self.getNodeName()
+            self.__hostPath = hostPath
             self.__containerPath = containerPath
             self.__mount = True
         else: 
@@ -147,6 +147,7 @@ class Switch(Node):
                     interfaces.append(self.getNodeName())
                 else:
                     raise Exception(f"Expected at least one node reference to sniff packets on {self.getNodeName()} switch")
+            options = list(set(interfaces) - set(['lo', 'ovs-system']))
             options = ['-i '+interface for interface in interfaces]
             options = ' '.join(options)
             subprocess.run(f"docker exec {self.getNodeName()} tshark {options} -b duration:{rotateInterval} -w {path}/dump.pcap > /dev/null 2>&1 &", shell=True)
