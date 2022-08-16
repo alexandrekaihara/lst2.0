@@ -140,9 +140,9 @@ class Switch(Node):
     # Return:
     def collectFlows(self, nodes=[], path='', rotateInterval=60, sniffAll=False) -> None:
         try:
-            interfaces = self.__getAllIntefaces()
+            interfaces = self._Node__getAllIntefaces()
             if sniffAll == False and len(nodes) > 0: 
-                interfaces = [self.__getThisInterfaceName(node) for node in nodes]
+                interfaces = [self._Node__getThisInterfaceName(node) for node in nodes]
                 interfaces.append(self.getNodeName())
             else:
                 raise Exception(f"Expected at least one node reference to sniff packets on {self.getNodeName()} swithc")
