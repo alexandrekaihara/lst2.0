@@ -82,8 +82,6 @@ def setNetworkConfig(node: Node, bridge: Node, subnet: str, address: int, setFil
 
 def createBridge(name: str, ip: str, gatewayIp: str, netflowPort=9000) -> None: 
     printTerm(f"[LST2.0] Creating Switch {name}")
-    subprocess.run(f"mkdir {getcwd()}/flows > /dev/null 2>&1", shell=True)
-    subprocess.run(f"mkdir {getcwd()}/flows/{name} > /dev/null 2>&1", shell=True)
     nodes[name] = Switch(name, getcwd()+'/flows/'+name, '/home/pcap')
     nodes[name].run('mkdir /home/pcap > /dev/null 2>&1')
     nodes[name].instantiate()
