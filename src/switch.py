@@ -25,29 +25,27 @@ class Switch(Node):
     # Params:
     # Return:
     #   None
-    def __init__(self, name: str, collectMetrics=False, collectTo='', rotateInterval=60):
+    def __init__(self, name: str, collectMetrics=False, hostPath='', containerPath=''):
         super().__init__(name)
         self.__collect = False
         if collectMetrics:
             self.__collect = True
-            self.__collectTo = collectTo+'/'+self.getNodeName()
-            self.__rotateInterval = rotateInterval
-            subprocess.run(f"mkdir {self.__collectTo} > /dev/null 2>&1", shell=True)
-
+            self.__hostPath = hostPath+'/'+self.getNodeName()
+            self.__containerPath = containerPath
+            subprocess.run(f"mkdir {self.__hostPath} > /dev/null 2>&1", shell=True)
 
     # Brief: Instantiate an OpenvSwitch switch container
     # Params:
     # Return:
     #   None
-    def instantiate(self, image='mdewinged/cidds:openvswitch', controllerIP='', controllerPort=-1) -> None:
+    def instantiate(self, image='mdewinged/cidds:openvswitch', controllerIP='', controllerPort=-1,) -> None:
         mount = ''
-        if self.__collect: mount = f'-v {self.__collectTo}:/TCPDUMP_and_CICFlowMeter-master/csv'
+        if self.__collect: mount = f'-v {self.__hostPath}:{self.__containerPath}'
         super().instantiate(dockerCommand=f"docker run -d --network=none --privileged {mount} --name={self.getNodeName()} {image}")
         try:
             # Create bridge and set it up
             subprocess.run(f"docker exec {self.getNodeName()} ovs-vsctl add-br {self.getNodeName()}", shell=True)
             subprocess.run(f"docker exec {self.getNodeName()} ip link set {self.getNodeName()} up", shell=True)
-            if self.__collect: self.__collectFlows()
         except Exception as ex:
             logging.error(f"Error while creating the switch {self.getNodeName()}: {str(ex)}")
             raise NodeInstantiationFailed(f"Error while creating the switch {self.getNodeName()}: {str(ex)}")
@@ -134,10 +132,23 @@ class Switch(Node):
             logging.error(f"Error clearing IPFIX on {self.getNodeName()} switch: {str(ex)}")
             raise Exception(f"Error clearing IPFIX on {self.getNodeName()} switch: {str(ex)}")
 
-    def __collectFlows(self) -> None:
+    # Brief: Set up the tshark to sniff all the packets into pcap files
+    # Params:
+    #   List<Node> nodes: References of the nodes connected to this switch to sniff packets
+    #   boolean sniffAll: If sniff all is set  
+    # Return:
+    def collectFlows(self, nodes: list, rotateInterval=60, sniffAll=False) -> None:
+        if not self.__collect: raise Exception(f"Cannot collect flows on {self.getNodeName()}, instantiate the container with the collectMetrics set to True")
         try:
-            subprocess.run(f"docker exec {self.getNodeName()} chmod +x /TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh", shell=True)
-            subprocess.run(f"docker exec {self.getNodeName()} ./TCPDUMP_and_CICFlowMeter-master/capture_interface_pcap.sh {self.getNodeName()} /TCPDUMP_and_CICFlowMeter-master {self.__rotateInterval} > /dev/null 2>&1 &", shell=True)
+            interfaces = self.__getAllIntefaces()
+            if sniffAll == False and len(nodes) > 0: 
+                interfaces = [self.__getThisInterfaceName(node) for node in nodes]
+                interfaces.append(self.getNodeName())
+            else:
+                raise Exception(f"Expected at least one node reference to sniff packets on {self.getNodeName()} swithc")
+            options = ['-i '+interface for interface in interfaces]
+            options = ' '.join(options)
+            subprocess.run(f"docker exec {self.getNodeName()} tshark {options} -b duration:{rotateInterval} -w {self.__hostPath}/dump.pcap > /dev/null 2>&1 &", shell=True)
         except Exception as ex:
             logging.error(f"Error set the collector on {self.getNodeName()}: {str(ex)}")
             raise Exception(f"Error set the collector on {self.getNodeName()}: {str(ex)}")

@@ -277,11 +277,19 @@ class Node:
     #   Return true if it is connected or false otherwise
     def __isConnected(self, node: Node) -> bool:
         interfaceName = self.__getThisInterfaceName(node)
-        output = subprocess.run(f"docker exec {self.getNodeName()} ifconfig -a | sed 's/[ \t].*//;/^$/d'", shell=True, capture_output=True)
-        interfaces = output.stdout.decode('utf8').replace(":", '').split('\n')
+        interfaces = self.__getAllIntefaces()
         for interface in interfaces: 
             if interface == interfaceName: return True
         return False
+
+    # Brief: Get all interfaces names
+    # Params:
+    # Return:
+    #   Return a list with the name of all interfaces
+    def __getAllIntefaces(self) -> list:
+        output = subprocess.run(f"docker exec {self.getNodeName()} ifconfig -a | sed 's/[ \t].*//;/^$/d'", shell=True, capture_output=True)
+        interfaces=output.stdout.decode('utf8').replace(":", '').split('\n')
+        return list(filter(None, interfaces)) # Remove empty strings
 
     # Brief: Verifies if the container is active
     # Params:
