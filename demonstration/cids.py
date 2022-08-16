@@ -82,9 +82,9 @@ def setNetworkConfig(node: Node, bridge: Node, subnet: str, address: int, setFil
 
 def createBridge(name: str, ip: str, gatewayIp: str, netflowPort=9000) -> None: 
     printTerm(f"[LST2.0] Creating Switch {name}")
-    subprocess(f"mkdir {getcwd()}/flows > /dev/null 2>&1", shell=True)
-    subprocess(f"mkdir {getcwd()}/flows/{name} > /dev/null 2>&1", shell=True)
-    nodes[name] = Switch(name, True, getcwd()+'/flows/'+name, '/home/pcap')
+    subprocess.run(f"mkdir {getcwd()}/flows > /dev/null 2>&1", shell=True)
+    subprocess.run(f"mkdir {getcwd()}/flows/{name} > /dev/null 2>&1", shell=True)
+    nodes[name] = Switch(name, getcwd()+'/flows/'+name, '/home/pcap')
     nodes[name].run('mkdir /home/pcap > /dev/null 2>&1')
     nodes[name].instantiate()
     printTerm("[LST2.0] ... Instantiating container")
@@ -149,7 +149,7 @@ def collectLogs():
     hosts = ['e1', 'e2', 'm1', 'm2', 'm3', 'm4', 'o1', 'o2', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'd10', 'd11', 'd12', 'd13']
     ips = ['50.3', '50.4', '200.2', '200.3', '200.4', '200.5', '210.2', '210.3', '220.2', '220.3', '220.4', '220.5', '220.6', '220.7', '220.8', '220.9', '220.10', '220.11', '220.12', '220.13', '220.14']
     def getLog(ip, host):
-        subprocess.run(f'docker cp {host}:/home/debian/log/192.168.{ip}.log logs/192.168.{ip}.log', shell=True)
+        subprocess.run(f'docker cp {host}:/home/debian/log/192.168.{ip}.log logs/192.168.{ip}.log > /dev/null 2>&1', shell=True)
     [getLog(ip, host) for ip, host in zip(ips, hosts)]
 
 
