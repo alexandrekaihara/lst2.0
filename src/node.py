@@ -173,7 +173,7 @@ class Node:
     #   Returns variable that contains stdout and stderr (more information in subprocess documentation)
     def run(self, command: str) -> str:
         try:
-            return subprocess.run(command, shell=True, capture_output=True)
+            return subprocess.run(f'docker exec {self.getNodeName()} '+command, shell=True, capture_output=True)
         except Exception as ex:
             logging.error(f"Error executing command {command} in {self.getNodeName()}: {str(ex)}")
             raise Exception(f"Error executing command {command} in {self.getNodeName()}: {str(ex)}")

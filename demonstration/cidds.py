@@ -148,6 +148,7 @@ containerPath = '/home/flows'
 
 # Get statsitics from all pcaps files
 cicflowmeter = CICFlowMeter('cic', hostPath, containerPath)
+cicflowmeter.instantiate()
 [cicflowmeter.analyze(getcwd()+'/'+pcap, hostPath) for pcap in pcaps]
 cicflowmeter.delete()
 
