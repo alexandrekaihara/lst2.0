@@ -19,9 +19,12 @@
 FROM ubuntu:20.04
 
 RUN apt update \
-&& RUNLEVEL=1 apt install -y --no-install-recommends sudo net-tools iproute2 iputils-ping nano iptables wget unzip tcpdump sudo default-jdk libpcap-dev
+&& RUNLEVEL=1 apt install -y --no-install-recommends openvswitch-switch sudo net-tools iproute2 iputils-ping nano iptables wget unzip tcpdump sudo default-jdk libpcap-dev
 
 # Start setup
+COPY CICFlowMeter .
+COPY capture_interface_pcap.sh .
+COPY convert_pcap_csv.sh .
 COPY setup.sh .
 RUN chmod +x setup.sh\
 && ./setup.sh
