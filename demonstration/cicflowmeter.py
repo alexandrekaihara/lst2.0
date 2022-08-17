@@ -51,4 +51,4 @@ class CICFlowMeter(Node):
     # Return:
     def analyze(self, pcapPath: str, destPath) -> None:
         self.run(f'./TCPDUMP_and_CICFlowMeter-master/convert_pcap_csv.sh {pcapPath}')
-        self.run(f'mv /TCPDUMP_and_CICFlowMeter-master/csv/* {destPath}')
+        self.run(f'find /TCPDUMP_and_CICFlowMeter-master/csv -f -exec mv {destPath} \\;')
