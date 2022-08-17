@@ -140,36 +140,42 @@ def unmakeChanges():
 
 
 def convertPcap():
-pcaps = glob('flows/brint/*')
-pcaps = pcaps + glob('flows/brex/*')
+    printTerm(f"[LST2.0] Converting pcap files with CICFlowMeter")
+    pcaps = glob('flows/brint/*')
+    pcaps = pcaps + glob('flows/brex/*')
 
-hostPath = getcwd()+'/flows'
-containerPath = '/home/flows'
+    hostPath = getcwd()+'/flows'
+    containerPath = '/home/flows'
 
-# Get statsitics from all pcaps files
-cicflowmeter = CICFlowMeter('cic', hostPath, containerPath)
-cicflowmeter.instantiate()
-[cicflowmeter.analyze('/home/'+pcap, containerPath) for pcap in pcaps]
-cicflowmeter.delete()
+    # Get statsitics from all pcaps files
+    printTerm(f"[LST2.0] ... Converting Files (it might take several minutes)")
+    cicflowmeter = CICFlowMeter('cic', hostPath, containerPath)
+    cicflowmeter.instantiate()
+    [cicflowmeter.analyze('/home/'+pcap, containerPath) for pcap in pcaps]
+    cicflowmeter.delete()
 
-# Merge all csv files
-csvs = glob('flows/*.csv')
-csv_content = ''
-def get_content(csv):
-    nonlocal csv_content
-    with open(csv, 'r') as f:
-        csv_content += f.read()
-[get_content(csv) for csv in csvs]
+    # Merge all csv files
+    printTerm(f"[LST2.0] ... Merging all CSV Files")
+    csvs = glob('flows/*.csv')
+    csv_content = ''
+    def get_content(csv):
+        nonlocal csv_content
+        with open(csv, 'r') as f:
+            csv_content += f.read()
+    [get_content(csv) for csv in csvs]
 
-# Remove duplicate headers
-csv_content.split('\n')
-header = csv_content[0]
-csv_content = [csv_content for content in csv_content if not 'Flow ID' in csv_content]
-csv_content = header + csv_content
+    # Remove duplicate headers
+    printTerm(f"[LST2.0] ... Removing Duplicate Headers")
+    csv_content = csv_content.split('\n')
+    header = csv_content[0]
+    csv_content = [content for content in csv_content if not 'Flow ID' in content]
+    csv_content = header + '\n' + '\n'.join(csv_content)
 
-# Save new csv file
-with open(hostPath+'/flows/final_report.csv', 'w') as f:
-    f.write(csv_content)
+    # Save new csv file
+    subprocess.run(f'rm flows/dump*', shell=True)
+    printTerm(f"[LST2.0] ... Saving CSV File")
+    with open(hostPath+'/final_report.csv', 'w') as f:
+        f.write(csv_content)
 
 
 def signal_handler(sig, frame):
