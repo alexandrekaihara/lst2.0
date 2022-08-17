@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import csv
 from gc import collect
 import signal
 import sys
@@ -6,8 +7,10 @@ import subprocess
 from wsgiref.simple_server import ServerHandler, server_version
 from host import Host
 from switch import Switch
+from glob import glob
 from controller import Controller
 from configparser import ConfigParser
+from cicflowmeter import CICFlowMeter
 from node import Node
 from os import getcwd
 from globalvariables import *
@@ -136,8 +139,36 @@ def unmakeChanges():
     [node.delete() for _,node in nodes.items()]
 
 
-def converPcap():
-    pass
+def convertPcap():
+pcaps = glob('flows/brint/*')
+pcaps = pcaps + glob('flows/brex/*')
+
+hostPath = getcwd()+'/flows'
+containerPath = '/home/flows'
+
+# Get statsitics from all pcaps files
+cicflowmeter = CICFlowMeter('cic', hostPath, containerPath)
+[cicflowmeter.analyze(getcwd()+'/'+pcap, hostPath) for pcap in pcaps]
+cicflowmeter.delete()
+
+# Merge all csv files
+csvs = glob('flows/*.csv')
+csv_content = ''
+def get_content(csv):
+    nonlocal csv_content
+    with open(csv, 'r') as f:
+        csv_content += f.read()
+[get_content(csv) for csv in csvs]
+
+# Remove duplicate headers
+csv_content.split('\n')
+header = csv_content[0]
+csv_content = [csv_content for content in csv_content if not 'Flow ID' in csv_content]
+csv_content = header + csv_content
+
+# Save new csv file
+with open(hostPath+'/flows/final_report.csv', 'w') as f:
+    f.write(csv_content)
 
 
 def signal_handler(sig, frame):
@@ -239,7 +270,7 @@ try:
 except Exception as ex:
     collectLogs()
     unmakeChanges()
-    converPcap()
+    convertPcap()
     raise Exception(str(ex))
 
 print('[LST2.0] Press CTRL+C to finish experiment')
