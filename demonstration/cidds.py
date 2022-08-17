@@ -143,12 +143,13 @@ def convertPcap():
     printTerm(f"[LST2.0] Converting pcap files with CICFlowMeter")
     pcaps = glob('flows/brint/*')
     pcaps = pcaps + glob('flows/brex/*')
+    if len(pcaps) == 0: return
 
     hostPath = getcwd()+'/flows'
     containerPath = '/home/flows'
 
     # Get statsitics from all pcaps files
-    printTerm(f"[LST2.0] ... Converting Files (it might take several minutes)")
+    printTerm(f"[LST2.0] ... Converting {len(pcaps)} PCAP Files (it might take several minutes)")
     cicflowmeter = CICFlowMeter('cic', hostPath, containerPath)
     cicflowmeter.instantiate()
     [cicflowmeter.analyze('/home/'+pcap, containerPath) for pcap in pcaps]
@@ -181,6 +182,7 @@ def convertPcap():
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
     unmakeChanges()
+    convertPcap()
     sys.exit(0)
 
 
