@@ -46,7 +46,7 @@ As shown in the section above, the "cidds.py" is an example of how to create a t
 It is important to mention that all the configuration methods must be used after creating the container using the "instantiate" method.
 
 ### Create network node
-To create a network node it is necessary to create an instance of [Switch](lst2.0/src/switch.py), [Host](lst2.0/src/host.py) or [Controller](lst2.0/src/controller.py), passing the name of the node as a parameter.
+To create a network node it is necessary to create an instance of [Switch](https://github.com/alexandrekaihara/lst2.0/blob/main/src/switch.py), [Host](https://github.com/alexandrekaihara/lst2.0/blob/main/src/host.py) or [Controller](https://github.com/alexandrekaihara/lst2.0/blob/main/src/controller.py), passing the name of the node as a parameter.
 
 > cd lst2.0/src
 > python3
