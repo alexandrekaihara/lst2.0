@@ -29,7 +29,7 @@ To execute the script to set up the network topology, execute these commands:
 
 > cd lst2.0/demonstration
 
-> python3 cidds.py
+> sudo python3 cidds.py
 
 If you want to finish the experiment, press CTRL + C once.
 
