@@ -33,6 +33,8 @@ To execute the script to set up the network topology, execute these commands:
 
 If you want to finish the experiment, press CTRL + C once.
 
+At the end of execution, there will be generated a report of the execution by [CICFlowMeter](https://www.unb.ca/cic/research/applications.html) that will be located in "lst2.0/demonstration/flows/final_report.csv"
+
 ## Docker image build
 If it is necessary to make any change on the docker images, check the "docker" folder located on the root directory of this repository. To build any docker image, access the folder containing its "Dockerfile" file and execute:
 
@@ -120,6 +122,20 @@ h1.setDefaultGateway('10.0.0.5', s1)
 h2.setDefaultGateway('10.0.0.5', s1)
 c1.setDefaultGateway('10.0.0.5', s1)
 ```
+
+### Enable Network Monitoring
+To enable the Netflow, sFlow or IPFIX to monitor the network, you must use either "Switch.enableNetflow()", "Switch.enablesFlow()" or "Switch.enableIPFIX()". For example:
+
+```
+s1.enableNetflow('10.0.0.5', 9001)
+```
+
+Then Netflow packets will be sent to "10.0.0.5" on port 9001. To end the monitoring, it is necessary to clear the Netflow in the Open vSwitch, by using:
+
+```
+s1.clearNetflow()
+```
+
 
 ### Deleting Nodes
 To delete the nodes execute the following commands:
