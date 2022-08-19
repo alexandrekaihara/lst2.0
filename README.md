@@ -49,6 +49,7 @@ It is important to mention that all the configuration methods must be used after
 To create a network node it is necessary to create an instance of [Switch](https://github.com/alexandrekaihara/lst2.0/blob/main/src/switch.py), [Host](https://github.com/alexandrekaihara/lst2.0/blob/main/src/host.py) or [Controller](https://github.com/alexandrekaihara/lst2.0/blob/main/src/controller.py), passing the name of the node as a parameter.
 
 > cd lst2.0/src
+
 > python3
 
 Then execute the following commands:
