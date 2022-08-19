@@ -31,7 +31,7 @@ To execute the script to set up the network topology, execute these commands:
 
 > sudo python3 cidds.py
 
-If you want to finish the experiment, press CTRL + C once.
+If you want to finish the experiment, press CTRL + C once. If it is the first time you are executing the experiment, it will take longer to instantiate the containers because the images needs to be pulled from the Docker Hub.
 
 At the end of execution, there will be generated a report of the execution by [CICFlowMeter](https://www.unb.ca/cic/research/applications.html) that will be located in "lst2.0/demonstration/flows/final_report.csv"
 
