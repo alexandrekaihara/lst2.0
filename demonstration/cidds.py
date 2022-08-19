@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import csv
+from email.mime import image
 from gc import collect
 import signal
 import sys
@@ -16,6 +17,8 @@ from os import getcwd
 from globalvariables import *
 
 class Seafile(Host):
+    def instantiate(self):
+        super().instantiate(dockerImage=seafileserver)
     def updateServerConfig(self) -> None:
         self.copyContainerToLocal("/home/seafolder", "seafolder")
         out = subprocess.run("cat seafolder", shell=True, capture_output=True).stdout.decode('utf8')
@@ -113,8 +116,8 @@ def createController(name: str, bridgeName: str, controllerIp: str, controllerPo
 def createServer(name: str, serverImage: str, subnet: str,  address: int) -> None:
     printTerm(f"[LST2.0] Creating Server {name}")
     nodes[name] = Host(name)
-    nodes[name].instantiate(serverImage)
     printTerm("[LST2.0] ... Instantiating container")
+    nodes[name].instantiate(serverImage)
     setNetworkConfig(nodes[name], nodes['brint'], subnet, address)
 
 

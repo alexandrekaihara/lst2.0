@@ -1,4 +1,4 @@
-repository = 'alexandremitsurukaihara:lst2.0'
+repository = 'alexandremitsurukaihara/lst2.0'
 seafileserver = repository + ':seafile'
 mailserver = repository + ':mail'
 webserver = repository + ':web'
