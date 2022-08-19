@@ -41,7 +41,7 @@ class Node:
     #   String DockerCommand: String to be used to instantiate the container instead of the standard command
     # Return:
     #   None
-    def instantiate(self, dockerImage="host:latest", dockerCommand = '', dns='8.8.8.8') -> None:
+    def instantiate(self, dockerImage="alexandremitsurukaihara/lst2.0:host", dockerCommand = '', dns='8.8.8.8') -> None:
         try:    
             if dockerCommand == '':
                 subprocess.run(f"docker run -d --network=none --privileged --name={self.getNodeName()} --dns={dns} {dockerImage}", shell=True, capture_output=True)

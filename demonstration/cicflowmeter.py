@@ -39,7 +39,7 @@ class CICFlowMeter(Node):
     # Params:
     # Return:
     #   None
-    def instantiate(self, image='mdewinged/cidds:cicflowmeter') -> None:
+    def instantiate(self, image='alexandremitsurukaihara/lst2.0:cicflowmeter') -> None:
         mount = ''
         if self.__mount: mount = f'-v {self.__hostPath}:{self.__containerPath}'
         super().instantiate(dockerCommand=f"docker run -d --network=none --privileged {mount} --name={self.getNodeName()} {image}")

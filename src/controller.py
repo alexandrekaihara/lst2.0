@@ -29,7 +29,7 @@ class Controller(Node):
     # Params:
     # Return:
     #   None
-    def instantiate(self, dockerImage='ryucontroller', dockerCommand='') -> None:
+    def instantiate(self, dockerImage='alexandremitsurukaihara/lst2.0:ryucontroller', dockerCommand='') -> None:
         super().instantiate(dockerImage=dockerImage, dockerCommand=dockerCommand)
 
     # Brief: Instantiate a controller container, the ip and port will only be used if the command parameter is an empty list. In this case, will be instantiated a Ryu controller.
