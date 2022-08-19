@@ -1,6 +1,6 @@
 # Lightweight SDN Testbed (LST) 2.0
 ## Description
-Not all emulated testbeds are suitable for security experimentation. Often security testbeds are restricted to their application context or are based on other technologies which have configurability and security application limitations (\textit{e.g.} Mininet). While other proposals allow greater configurability, they do not focus on security applications or are not inserted in the context of SDN networks. To address the identified research gap, the Lightweight SDN Testbed (\prop) is proposed. \prop is a lightweight tool capable of supporting different application contexts both for security and SDN networks programmatically and in real-time through Python. It is possible to monitor the network and collect metrics using Netflow, sFlow, IPFIX, or CICFlowMeter. In addition, pre-built Docker images are available for emulating both benign and malicious network flows.
+Not all emulated testbeds are suitable for security experimentation. Often security testbeds are restricted to their application context or are based on other technologies which have configurability and security application limitations (e.g. Mininet). While other proposals allow greater configurability, they do not focus on security applications or are not inserted in the context of SDN networks. To address the identified research gap, the Lightweight SDN Testbed (LST) 2.0 is proposed. LST 2.0 is a lightweight tool capable of supporting different application contexts both for security and SDN networks programmatically and in real-time through Python. It is possible to monitor the network and collect metrics using Netflow, sFlow, IPFIX, or CICFlowMeter. In addition, pre-built Docker images are available for emulating both benign and malicious network flows.
 
 This tool aims to attend the demands of the most diverse study scenarios in SDN and security networks, through an interface with a set of reduced methods, but which allow high flexibility in the configuration and generation of customized topologies. LST 2.0 is mainly based on containers for generating network nodes and all network configuration and behavior is done programmatically. The tool is organized through a set of well-defined methods belonging to a hierarchy of classes, whose parent class, named Node, has all the attributes and minimal methods to instantiate, delete and configure any container. Thus, users can develop their own classes inheriting the attributes of the Node class and focusing only on the specific settings for the study.
 
@@ -33,6 +33,8 @@ To execute the script to set up the network topology, execute these commands:
 
 If you want to finish the experiment, press CTRL + C once.
 
+At the end of execution, there will be generated a report of the execution by [CICFlowMeter](https://www.unb.ca/cic/research/applications.html) that will be located in "lst2.0/demonstration/flows/final_report.csv"
+
 ## Docker image build
 If it is necessary to make any change on the docker images, check the "docker" folder located on the root directory of this repository. To build any docker image, access the folder containing its "Dockerfile" file and execute:
 
@@ -46,9 +48,10 @@ As shown in the section above, the "cidds.py" is an example of how to create a t
 It is important to mention that all the configuration methods must be used after creating the container using the "instantiate" method.
 
 ### Create network node
-To create a network node it is necessary to create an instance of [Switch](lst2.0/src/Switch.py), [Host](lst2.0/src/Host) or [Controller](lst2.0/src/Controller), passing the name of the node as a parameter.
+To create a network node it is necessary to create an instance of [Switch](https://github.com/alexandrekaihara/lst2.0/blob/main/src/switch.py), [Host](https://github.com/alexandrekaihara/lst2.0/blob/main/src/host.py) or [Controller](https://github.com/alexandrekaihara/lst2.0/blob/main/src/controller.py), passing the name of the node as a parameter.
 
 > cd lst2.0/src
+
 > python3
 
 Then execute the following commands:
@@ -119,6 +122,20 @@ h1.setDefaultGateway('10.0.0.5', s1)
 h2.setDefaultGateway('10.0.0.5', s1)
 c1.setDefaultGateway('10.0.0.5', s1)
 ```
+
+### Enable Network Monitoring
+To enable the Netflow, sFlow or IPFIX to monitor the network, you must use either "Switch.enableNetflow()", "Switch.enablesFlow()" or "Switch.enableIPFIX()". For example:
+
+```
+s1.enableNetflow('10.0.0.5', 9001)
+```
+
+Then Netflow packets will be sent to "10.0.0.5" on port 9001. To end the monitoring, it is necessary to clear the Netflow in the Open vSwitch, by using:
+
+```
+s1.clearNetflow()
+```
+
 
 ### Deleting Nodes
 To delete the nodes execute the following commands:
