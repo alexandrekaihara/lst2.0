@@ -27,8 +27,9 @@ class Switch(Node):
     #   None
     def __init__(self, name: str, hostPath='', containerPath=''):
         super().__init__(name)
-        self.__mount = False
-        if hostPath != '' and containerPath != '':
+        if hostPath == '' and containerPath == '':
+            self.__mount = False
+        elif hostPath != '' and containerPath != '':
             self.__hostPath = hostPath
             self.__containerPath = containerPath
             self.__mount = True

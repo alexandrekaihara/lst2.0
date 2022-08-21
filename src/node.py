@@ -42,6 +42,8 @@ class Node:
     # Return:
     #   None
     def instantiate(self, dockerImage="alexandremitsurukaihara/lst2.0:host", dockerCommand = '', dns='8.8.8.8') -> None:
+        if not self.__imageExists(dockerImage):
+            self.__pullImage(dockerImage)
         try:    
             if dockerCommand == '':
                 subprocess.run(f"docker run -d --network=none --privileged --name={self.getNodeName()} --dns={dns} {dockerImage}", shell=True, capture_output=True)
@@ -51,6 +53,28 @@ class Node:
             logging.error(f"Error while criating the container {self.getNodeName()}: {str(ex)}")
             raise NodeInstantiationFailed(f"Error while criating the container {self.getNodeName()}: {str(ex)}")
         self.__enableNamespace(self.getNodeName())
+
+    # Brief: Verifies if the image exists
+    # Params:
+    #   String image: Tag of the Docker image 
+    # Return:
+    #   True if the image exists locally
+    def __imageExists(self, image: str) -> bool:
+        out = self.run(f"docker inspect --type=image {image}")
+        if '[]' in out.stdout: return False
+        else: return True
+            
+    # Brief: Verifies if the image exists
+    # Params:
+    #   String image: Tag of the Docker image 
+    # Return:
+    #   True if the image exists locally
+    def __pullImage(self, image):
+        try: 
+            subprocess.run(f"docker pull {image}", shell=True)
+        except Exception as ex:
+            logging.error(f"Error pulling non-existing {image} image: {str(ex)}")
+            raise NodeInstantiationFailed(f"Error pulling non-existing {image} image: {str(ex)}")
 
     # Brief: Instantiate the container
     # Params:
