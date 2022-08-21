@@ -61,10 +61,10 @@ class Node:
     #   True if the image exists locally
     def __imageExists(self, image: str) -> bool:
         out = self.run(f"docker inspect --type=image {image}")
-        if '[]' in out.stdout: return False
+        if '[]' in out.stdout.decode('utf-8'): return False
         else: return True
             
-    # Brief: Verifies if the image exists
+    # Brief: Pulls the image from a Docker Hub repository
     # Params:
     #   String image: Tag of the Docker image 
     # Return:
@@ -216,7 +216,11 @@ class Node:
     #   String destPath: Absolute path to copy the file inside the container (path+filename)
     # Return:
     def copyLocalToContainer(self, path: str, destPath: str) -> None:
-        self.run(f"docker cp {path} {self.getNodeName()}:{destPath}")
+        try:
+            subprocess.run(f"docker cp {path} {self.getNodeName()}:{destPath}", shell=True, capture_output=True)
+        except Exception as ex:
+            logging.error(f"Error copying file from {path} to {destPath}: {str(ex)}")
+            raise Exception(f"Error copying file from {path} to {destPath}: {str(ex)}")
 
     # Brief: Copy local file into container
     # Params:
@@ -224,7 +228,11 @@ class Node:
     #   String destPath: Absolute or relative path to copy to local (path+filename)
     # Return:
     def copyContainerToLocal(self, path: str, destPath: str) -> None:
-        self.run(f"docker cp {self.getNodeName()}:{destPath} {path}")
+        try:
+            subprocess.run(f"docker cp {self.getNodeName()}:{destPath} {path}", shell=True, capture_output=True)
+        except Exception as ex:
+            logging.error(f"Error copying file from {path} to {destPath}: {str(ex)}")
+            raise Exception(f"Error copying file from {path} to {destPath}: {str(ex)}")
 
     # Brief: Returns the name of the interface to be created on this node
     # Params:
