@@ -212,8 +212,8 @@ class Node:
 
     # Brief: Copy local file into container
     # Params:
-    #   String path: Absolute or relative path to the file to be copied (path+filename)
-    #   String destPath: Absolute path to copy the file inside the container (path+filename)
+    #   String path: Absolute or relative path to the file to be copied from local (path+filename)
+    #   String destPath: Absolute path to copy the file to the container (path+filename)
     # Return:
     def copyLocalToContainer(self, path: str, destPath: str) -> None:
         try:
@@ -224,12 +224,12 @@ class Node:
 
     # Brief: Copy local file into container
     # Params:
-    #   String path: Absolute path to the file to be copied (path+filename)
+    #   String path: Absolute path to the file to be copied from container (path+filename)
     #   String destPath: Absolute or relative path to copy to local (path+filename)
     # Return:
     def copyContainerToLocal(self, path: str, destPath: str) -> None:
         try:
-            subprocess.run(f"docker cp {self.getNodeName()}:{destPath} {path}", shell=True, capture_output=True)
+            subprocess.run(f"docker cp {self.getNodeName()}:{path} {destPath}", shell=True, capture_output=True)
         except Exception as ex:
             logging.error(f"Error copying file from {path} to {destPath}: {str(ex)}")
             raise Exception(f"Error copying file from {path} to {destPath}: {str(ex)}")
