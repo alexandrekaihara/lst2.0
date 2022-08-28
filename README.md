@@ -27,7 +27,7 @@ We provide a Bash script to install all the needed dependencies. To install all 
 > sudo ./dependencies.sh
 
 ## Execution
-To execute the script to set up the network topology, execute these commands:
+We provide a script to create a small organization topology made by servers and clients (which is possible to define its behavior). To set up the experiment, execute these commands:
 
 > cd lst2.0/demonstration
 
@@ -36,6 +36,11 @@ To execute the script to set up the network topology, execute these commands:
 If you want to finish the experiment, press CTRL + C once. If it is the first time you are executing the experiment, it will take longer to instantiate the containers because the images need to be pulled from the Docker Hub.
 
 At the end of execution, there will be generated a report of the execution by [CICFlowMeter](https://www.unb.ca/cic/research/applications.html) that will be located in "lst2.0/demonstration/flows/final_report.csv"
+
+### Define Client's Behavior
+All the clients will receive a copy of the folder "lst2.0/demonstration/automation", which contiains all the scripts to simulate a worker during the working hour. Basically, the Client is able to execute 6 tasks inside the network, that is: Browsing the internet; Copying files from the File Server; Access the Email from  the Email Server; Make requests to the Printer; Open SSH sessions with the local Servers; And make Attacks inside the Network.
+
+To change the Client's behavior it is necessary to change create a new client EDIT
 
 ## Docker image build
 If it is necessary to make any changes to the docker images, check the "docker" folder located in the root directory of this repository. To build any docker image, access the folder containing its "Dockerfile" file and execute:
