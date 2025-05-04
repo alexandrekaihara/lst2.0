@@ -1,4 +1,6 @@
 # Lightweight SDN Testbed (LST) 2.0
+## Deprecation Note
+This repository is deprecated, refer to the most revent version of the project on https://github.com/alexandrekaihara/lft. All capabilities from LST are extended and improved on Lightweight Fog Testbed (LFT).
 ## Description
 Not all emulated testbeds are suitable for security experimentation. Often security testbeds are restricted to their application context or are based on other technologies which have configurability and security application limitations (e.g. Mininet). While other proposals allow greater configurability, they do not focus on security applications or are not inserted in the context of SDN networks. To address the identified research gap, the Lightweight SDN Testbed (LST) 2.0 is proposed. LST 2.0 is a lightweight tool capable of supporting different application contexts both for security and SDN networks programmatically and in real-time through Python. It is possible to monitor the network and collect metrics using Netflow, sFlow, IPFIX, or CICFlowMeter. In addition, pre-built Docker images are available for emulating both benign and malicious network flows.
 
